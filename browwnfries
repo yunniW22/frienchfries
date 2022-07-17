@@ -68,7 +68,7 @@ end)
 local Y = Window:NewTab("MISC")
 local YSection = Y:NewSection("MISC")
 
-YSection:NewButton("Headless", "Client Sided", function()
+YSection:NewButton("Headless&Korblox", "Client Sided", function()
     game.Players.LocalPlayer.Character.Head.Transparency = 1
 game.Players.LocalPlayer.Character.Head.Transparency = 1
 for i,v in pairs(game.Players.LocalPlayer.Character.Head:GetChildren()) do
