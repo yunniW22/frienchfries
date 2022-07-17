@@ -2,11 +2,11 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHept
 local Window = Library.CreateLib("French Fries", "Synapse")
 
 -- MAIN
-local Main = Window:NewTab("Legit Slient aim")
-local MainSection = Main:NewSection("Legit")
+local Main = Window:NewTab("Aim Things")
+local MainSection = Main:NewSection("Aim")
 
 
-MainSection:NewButton("Enable", "This is NOT a toggle 40 fov 150 hitchance from 200", function()
+MainSection:NewButton("Legit slient aim", "This is NOT a toggle 40 fov 150 hitchance from 200", function()
     loadstring(game:HttpGet("https://gist.githubusercontent.com/diegxw/46748ae27e8a4630619d85ea1e13dc5e/raw/5225600f4150f87646b8d20088a1da9f100aaa06/settingsV2"))()
 DaHoodSettings.Prediction = 0.131
 Aiming.TargetPart = {"Head", "UpperTorso", "LowerTorso", "HumanoidRootPart", "RightFoot", "LeftFoot"}
@@ -15,6 +15,58 @@ Aiming.FOVSides = 25
 Aiming.HitChance = 110
 Aiming.ShowFOV = false
 print ("clicked")
+end)
+MainSection:NewButton("Trigger Bot", "Shoots People When Mouse On Them", function()
+    local HoldClick = true
+local Hotkey = 't' -- Leave blank for always on
+local HotkeyToggle = true -- True if you want it to toggle on and off with a click
+
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+local Toggle = (Hotkey ~= '')
+local CurrentlyPressed = false
+
+Mouse.KeyDown:Connect(function(key)
+	if HotkeyToggle == true and key == Hotkey then
+		Toggle = not Toggle
+	elseif 
+		key == Hotkey then
+		Toggle = true
+	end
+end)
+
+Mouse.KeyUp:Connect(function(key)
+	if HotkeyToggle ~= true and key == Hotkey then
+		Toggle = false
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if Toggle then
+		if Mouse.Target then
+			if Mouse.Target.Parent:FindFirstChild('Humanoid') then
+				if HoldClick then
+					if not CurrentlyPressed then
+						CurrentlyPressed = true
+						mouse1press()
+					end
+				else
+					mouse1click()
+				end
+			else
+				if HoldClick then
+					CurrentlyPressed = false
+					mouse1release()
+				end
+			end
+		end
+	end
+end)
+
 end)
 
 
@@ -87,15 +139,9 @@ chr.RightFoot.MeshId = "902942089"
 chr.RightFoot.Transparency = "1" 
 end)
 
-
-
-    YSection:NewSlider("Walkspeed", "SPEED!!", 500, 16, function(s)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
-    end)
-
-    YSection:NewSlider("Jumppower", "JUMP HIGH!!", 350, 50, function(s)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
-    end)
+YSection:NewButton("Fake Macro Q To Macro", "Semi Real Macro", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/nEQZRJJP", true))()
+end)
 
 
 
