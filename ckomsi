@@ -1,0 +1,367 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "#aceloveskfc", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"}) 
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+
+local Tab = Window:MakeTab({
+	Name = "Aim Things",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+
+
+OrionLib:MakeNotification({
+	Name = "KFC",
+	Content = "This Script Is Still In BETA",
+	Image = "rbxassetid://4483345998",
+	Time = 10
+})
+
+Tab:AddButton({
+	Name = "Legit Slient",
+	Callback = function()
+        loadstring(game:HttpGet("https://gist.githubusercontent.com/diegxw/46748ae27e8a4630619d85ea1e13dc5e/raw/5225600f4150f87646b8d20088a1da9f100aaa06/settingsV2"))()
+DaHoodSettings.Prediction = 0.131
+Aiming.TargetPart = {"Head", "UpperTorso", "LowerTorso", "HumanoidRootPart", "RightFoot", "LeftFoot"}
+Aiming.FOV = 40
+Aiming.FOVSides = 25
+Aiming.HitChance = 110
+Aiming.ShowFOV = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "CamLock",
+	Callback = function()
+
+getgenv().Prediction = 0.165771
+getgenv().AimPart = "UpperTorso"
+getgenv().Key = "C"
+getgenv().DisableKey = "P"
+
+getgenv().FOV = true
+getgenv().ShowFOV = false
+getgenv().FOVSize = 55
+
+--// Variables (Service)
+
+local Players = game:GetService("Players")
+local RS = game:GetService("RunService")
+local WS = game:GetService("Workspace")
+local GS = game:GetService("GuiService")
+local SG = game:GetService("StarterGui")
+
+--// Variables (regular)
+
+local LP = Players.LocalPlayer
+local Mouse = LP:GetMouse()
+local Camera = WS.CurrentCamera
+local GetGuiInset = GS.GetGuiInset
+
+local AimlockState = true
+local Locked
+local Victim
+
+local SelectedKey = getgenv().Key
+local SelectedDisableKey = getgenv().DisableKey
+
+--// Check if aimlock is loaded
+
+if getgenv().Loaded == true then
+    Notify("Aimlock is already loaded!")
+    return
+end
+
+getgenv().Loaded = true
+
+--// FOV Circle
+
+local fov = Drawing.new("Circle")
+fov.Filled = false
+fov.Transparency = 1
+fov.Thickness = 1
+fov.Color = Color3.fromRGB(255, 255, 0)
+fov.NumSides = 1000
+
+--// Functions
+
+function update()
+    if getgenv().FOV == true then
+        if fov then
+            fov.Radius = getgenv().FOVSize * 2
+            fov.Visible = getgenv().ShowFOV
+            fov.Position = Vector2.new(Mouse.X, Mouse.Y + GetGuiInset(GS).Y)
+
+            return fov
+        end
+    end
+end
+
+function WTVP(arg)
+    return Camera:WorldToViewportPoint(arg)
+end
+
+function WTSP(arg)
+    return Camera.WorldToScreenPoint(Camera, arg)
+end
+
+function getClosest()
+    local closestPlayer
+    local shortestDistance = math.huge
+
+    for i, v in pairs(game.Players:GetPlayers()) do
+        local notKO = v.Character:WaitForChild("BodyEffects")["K.O"].Value ~= true
+        local notGrabbed = v.Character:FindFirstChild("GRABBING_COINSTRAINT") == nil
+        
+        if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health ~= 0 and v.Character:FindFirstChild(getgenv().AimPart) and notKO and notGrabbed then
+            local pos = Camera:WorldToViewportPoint(v.Character.PrimaryPart.Position)
+            local magnitude = (Vector2.new(pos.X, pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).magnitude
+            
+            if (getgenv().FOV) then
+                if (fov.Radius > magnitude and magnitude < shortestDistance) then
+                    closestPlayer = v
+                    shortestDistance = magnitude
+                end
+            else
+                if (magnitude < shortestDistance) then
+                    closestPlayer = v
+                    shortestDistance = magnitude
+                end
+            end
+        end
+    end
+    return closestPlayer
+end
+ 
+--// Checks if key is down
+
+Mouse.KeyDown:Connect(function(k)
+    SelectedKey = SelectedKey:lower()
+    SelectedDisableKey = SelectedDisableKey:lower()
+    if k == SelectedKey then
+        if AimlockState == true then
+            Locked = not Locked
+            if Locked then
+                Victim = getClosest()
+
+                Notify("Locked onto: "..tostring(Victim.Character.Humanoid.DisplayName))
+            else
+                if Victim ~= nil then
+                    Victim = nil
+
+                    Notify("Unlocked!")
+                end
+            end
+        else
+            Notify("Aimlock is not enabled!")
+        end
+    end
+    if k == SelectedDisableKey then
+        AimlockState = not AimlockState
+    end
+end)
+
+--// Loop update FOV and loop camera lock onto target
+
+RS.RenderStepped:Connect(function()
+    update()
+    if AimlockState == true then
+        if Victim ~= nil then
+            Camera.CFrame = CFrame.new(Camera.CFrame.p, Victim.Character[getgenv().AimPart].Position + Victim.Character[getgenv().AimPart].Velocity*getgenv().Prediction)
+        end
+    end
+end)
+	while wait() do
+        if getgenv().AutoPrediction == true then
+        local pingvalue = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+        local split = string.split(pingvalue,'(')
+        local ping = tonumber(split[1])
+            if ping < 225 then
+            getgenv().Prediction = 1.4
+        elseif ping < 215 then
+            getgenv().Prediction = 1.2
+	    elseif ping < 205 then
+            getgenv().Prediction = 1.0
+	    elseif ping < 190 then
+            getgenv().Prediction = 0.10
+        elseif ping < 180 then
+            getgenv().Prediction = 0.12
+	    elseif ping < 170 then
+            getgenv().Prediction = 0.15
+	    elseif ping < 160 then
+            getgenv().Prediction = 0.18
+	    elseif ping < 150 then
+            getgenv().Prediction = 0.110
+        elseif ping < 140 then
+            getgenv().Prediction = 0.113
+        elseif ping < 130 then
+            getgenv().Prediction = 0.116
+        elseif ping < 120 then
+            getgenv().Prediction = 0.120
+        elseif ping < 110 then
+            getgenv().Prediction = 0.124
+        elseif ping < 105 then
+            getgenv().Prediction = 0.127
+        elseif ping < 90 then
+            getgenv().Prediction = 0.130
+        elseif ping < 80 then
+            getgenv().Prediction = 0.133
+        elseif ping < 70 then
+            getgenv().Prediction = 0.136
+        elseif ping < 60 then
+            getgenv().Prediction = 0.15038
+        elseif ping < 50 then
+            getgenv().Prediction = 0.15038
+        elseif ping < 40 then
+            getgenv().Prediction = 0.145
+        elseif ping < 30 then
+            getgenv().Prediction = 0.155
+        elseif ping < 20 then
+            getgenv().Prediction = 0.157
+        end
+        end
+	end
+  	end    
+})
+
+
+Tab:AddButton({
+	Name = "Headless&Korblox",
+	Callback = function()
+      		game.Players.LocalPlayer.Character.Head.Transparency = 1
+game.Players.LocalPlayer.Character.Head.Transparency = 1
+for i,v in pairs(game.Players.LocalPlayer.Character.Head:GetChildren()) do
+if (v:IsA("Decal")) then
+v.Transparency = 1
+end
+end
+  	end    
+})
+
+
+
+
+local Tab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+------Y
+Tab:AddButton({
+	Name = "Fancy Fly",
+	Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/22kristina/swag/main/admin_fly"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Trash Talk keybind is Y",
+	Callback = function()
+        local words = {
+            'ur bad',
+            'seed',
+            'im not locking ur just bad',
+            'kid im not locking XDXDXDXD ur just bad',
+            'sad',
+            'sonned',
+            'how did u fail to get me',
+        }
+        
+        local player = game.Players.LocalPlayer
+        local keybind = 'y'
+        
+        local event = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
+        
+        player:GetMouse().KeyDown:connect(function(key)
+            if key == keybind then
+                event:FireServer(words[math.random(#words)], "All")
+            end
+        end)
+  	end    
+})
+
+
+
+
+
+
+
+local Tab = Window:MakeTab({
+	Name = "yuni",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = true
+})
+Tab:AddButton({
+	Name = "just 4 yuni",
+	Callback = function()
+        print ("dog")
+        
+        
+        
+        
+        
+        
+        
+  	end    
+})
+
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+
+
+
+
+
+
+
+--Beemo's simple whitelist
+local keys = {
+    "FhHD8dsfnaFHSDFKds8f8",
+    "HS7X83JDkdshadsu8EKD8",
+    "Js94h8dfhjKShdHFJhuhI",
+    "HD73JD3873Djsdh8JS8h8"
+}
+
+local counter = 1
+local keyCheck
+for i,v in pairs(keys) do
+    if counter == #keys then
+    --not whitelisted!
+    keys = ""
+    game.Players.LocalPlayer:Kick("Not a valid key!")
+    else
+        if v == _G.Key then
+            --Whitelisted!
+            print("Successfully whitelisted!")
+            keyCheck = _G.Key
+            keys = ""
+        else
+            counter = counter +1
+        end
+    end
+end
+
+while true do
+    if _G.Key == keyCheck then
+        --Not spoofed
+    else
+        game.Players.LocalPlayer:Kick("Do not try and spoof your key!")
+    end
+    wait()
+end
+
