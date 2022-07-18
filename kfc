@@ -365,3 +365,7 @@ while true do
     end
     wait()
 end
+
+
+
+_G.Key = "HS7X83JDkdshadsu8EKD7"
