@@ -2,17 +2,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 local Window = OrionLib:MakeWindow({Name = "#aceloveskfc", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"}) 
 
---[[
-Name = <string> - The name of the UI.
-HidePremium = <bool> - Whether or not the user details shows Premium status or not.
-SaveConfig = <bool> - Toggles the config saving in the UI.
-ConfigFolder = <string> - The name of the folder where the configs are saved.
-IntroEnabled = <bool> - Whether or not to show the intro animation.
-IntroText = <string> - Text to show in the intro animation.
-IntroIcon = <string> - URL to the image you want to use in the intro animation.
-Icon = <string> - URL to the image you want displayed on the window.
-CloseCallback = <function> - Function to execute when the window is closed.
-]]
+
 
 local Tab = Window:MakeTab({
 	Name = "Aim Things",
@@ -318,50 +308,7 @@ Tab:AddButton({
 })
 
 
---[[
-Name = <string> - The name of the button.
-Callback = <function> - The function of the button.
-]]
 
 
 
-
-
-
-
---Beemo's simple whitelist
-local keys = {
-    "FhHD8dsfnaFHSDFKds8f8",
-    "HS7X83JDkdshadsu8EKD8",
-    "Js94h8dfhjKShdHFJhuhI",
-    "HD73JD3873Djsdh8JS8h8"
-}
-
-local counter = 1
-local keyCheck
-for i,v in pairs(keys) do
-    if counter == #keys then
-    --not whitelisted!
-    keys = ""
-    game.Players.LocalPlayer:Kick("Not a valid key!")
-    else
-        if v == _G.Key then
-            --Whitelisted!
-            print("Successfully whitelisted!")
-            keyCheck = _G.Key
-            keys = ""
-        else
-            counter = counter +1
-        end
-    end
-end
-
-while true do
-    if _G.Key == keyCheck then
-        --Not spoofed
-    else
-        game.Players.LocalPlayer:Kick("Do not try and spoof your key!")
-    end
-    wait()
-end
 
